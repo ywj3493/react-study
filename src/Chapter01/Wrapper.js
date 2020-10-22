@@ -7,9 +7,9 @@ function Wrapper(props) {
     };
     return (
         <div style={style}>
-            //다른 로직이 있을 때
+            {/*다른 로직이 있을 때*/}
             {props.isSpecial ? props.children : "평범쓰"}
-            //단순히 보여주고 안 보여주고 할 때
+            {/*단순히 보여주고 안 보여주고 할 때*/}
             {props.isSpecial && "**"}
         </div>
     );

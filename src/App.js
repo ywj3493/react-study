@@ -1,6 +1,7 @@
 import React from 'react';
 import Hello from './Chapter01/Hello';
 import Wrapper from './Chapter01/Wrapper';
+import Counter from './Chapter01/Counter';
 
 
 import './App.css';
@@ -13,8 +14,8 @@ function App() {
       </Wrapper>
       <Wrapper>
         <Hello name = "woongjae" color="green"/>
-        </Wrapper>
-      
+      </Wrapper>
+      <Counter/>
     </div>
   );
 }
