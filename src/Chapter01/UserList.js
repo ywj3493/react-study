@@ -1,35 +1,26 @@
 import React from 'react';
 
-function User({user}) {
+function User({user, onRemove}) {
     return(
         <div>
-            <b>{user.username}</b> <span>({user.email})</span>
+            <b
+                style={{
+                    cursor: 'pointer',
+                    color: user.active ? 'green' : 'black'
+                }}
+                onClick={() => onToggle(user.id)}
+            >{user.username}</b> <span>({user.email})</span>
+            <button onClick={()=> onRemove(user.id)}> 삭제 </button>
         </div>
     )
 }
 
-function UserList() {
-    const users = [
-        {
-          id: 1,
-          username: 'velopert',
-          email: 'public.velopert@gmail.com'
-        },
-        {
-          id: 2,
-          username: 'tester',
-          email: 'tester@example.com'
-        },
-        {
-          id: 3,
-          username: 'liz',
-          email: 'liz@example.com'
-        }
-    ];
+function UserList({users, onRemove}) {
     return (
         <div>
             {users.map(user => (
-                <User user={user} key={user.id}/>
+                //리액트에서 배열 렌더링 할 때는 key 라는 props를 반드시 설정 해주어야 함
+                <User user={user} key={user.id} onRemove={onRemove}/>
             ))}
         </div>
     )
