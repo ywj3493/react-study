@@ -1,6 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
+
+function countActiveUsers(users) {
+  console.dir('활성 사용자 수를 세는 중 ...');
+  return users.filter(user=>user.active).length;
+}
 
 function ArrayWrapper() {
     const [inputs, setInputs] = useState({
@@ -61,6 +66,12 @@ function ArrayWrapper() {
         user.id === id ? {...user, active: !user.active } : user
       ));
     }
+    
+    // 첫번째 파라미터는 어떻게 연산할지 정의하는 함수, 두번째 파라미터는 deps 배열
+    // 이 배열 안에 넣은 내용이 바뀌면, 우리가 등록한 함수를 호출해서 값을 연산 해주고, 만약 내용이 바뀌지 않았다면, 이전에 연산한 값을 재사용 하게됨
+    const count = useMemo(() => countActiveUsers(users), [users]);
+    //const count = countActiveUsers(users);
+
     return (
       <div>
         <CreateUser 
@@ -69,7 +80,8 @@ function ArrayWrapper() {
             onChange={onChange}
             onCreate={onCreate}
         />
-        <UserList users = {users} onRemove={onRemove}/>
+        <UserList users = {users} onRemove={onRemove} onToggle={onToggle}/>
+        <div>활성 사용자 수 : {count}</div>
       </div>
     );
   }
