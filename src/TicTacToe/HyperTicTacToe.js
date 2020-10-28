@@ -9,7 +9,7 @@ function Square(props) {
             {props.value}
         </button>
     );
-}
+};
 
 function Board(props) {
     const renderSquare = (i) => {
@@ -40,7 +40,7 @@ function Board(props) {
             </div>
       </div>
     );
-}
+};
 
 function Game() {
     const [state, setState] = useState({
@@ -53,7 +53,7 @@ function Game() {
 
     const handleClick = (i) => {
         const newHistory = state.history.slice(0, state.stepNumber + 1);
-        const current = history[history.length - 1];
+        const current = newHistory[newHistory.length - 1];
         const newSquares = current.squares.slice();
         if(calculateWinner(newSquares) != '-' || newSquares[i]!= '-') {
             return ;
@@ -66,7 +66,7 @@ function Game() {
                     squares: newSquares,
                 }
             ],
-            stepNumber: history.length,
+            stepNumber: newHistory.length,
             xIsNext: !state.xIsNext,
         });
     }
@@ -79,8 +79,8 @@ function Game() {
         })
     }
 
-    const tempHistory = state.history;
-    const current = history[state.stepNumber];
+    const tempHistory = state.history.slice(0, state.stepNumber + 1);
+    const current = tempHistory[state.stepNumber];
     const winner = calculateWinner(current.squares);
     let status = (winner != '-') ? ('Winner: ' + winner) : ('Next player: ' + (state.xIsNext ? 'X' : 'O'));
 
@@ -108,7 +108,7 @@ function Game() {
             </div>
       </div>
     );
-}
+};
 
 function HyperTicTacToe() {
     return (
