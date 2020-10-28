@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 
-function User({user, onRemove, onToggle}) {
+const User = React.memo(function User({user, onRemove, onToggle}) {
     //컴포넌트 마운트, 언마운트, 업데이트 시 할 작업 설정하는 함수
     //첫번째 파라미터에 함수, 두번째 파라미터에 의존값 배열(deps)
     //deps 배열을 비운채 실행하면, 컴포넌트가 처음 나타날때만 useEffect에 등록한 함수가 호출됨, dep에 들어가면 지정한 값이 바뀔때도 호출됨
@@ -26,7 +26,7 @@ function User({user, onRemove, onToggle}) {
             <button onClick={()=> onRemove(user.id)}> 삭제 </button>
         </div>
     )
-}
+});
 
 function UserList({users, onRemove, onToggle}) {
     return (
@@ -39,4 +39,4 @@ function UserList({users, onRemove, onToggle}) {
     )
 }
 
-export default UserList;
+export default React.memo(UserList);
