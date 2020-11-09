@@ -1,7 +1,6 @@
 import React , {useState, useEffect} from 'react';
 
 function Square(props) {
-    
     return (
         <button 
             onClick={props.onClick}
