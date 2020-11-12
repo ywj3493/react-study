@@ -24,6 +24,7 @@ function OrgtpPageLayout () {
     const [loading, setLoad] = useState(false);
     const [error, setError] = useState(null);
     const [visible, setVisible] = useState(false);
+    const [isUpdate, setIsUpdate] = useState(false);
 
     //마운트 시에
     const fetchData = async () => {
@@ -67,6 +68,13 @@ function OrgtpPageLayout () {
         setVisible(true);
     }
 
+    //수정 버튼 onClick
+    const onClickUpdate = () => {
+        console.dir("onClickUpdate");
+        setVisible(true);
+        setIsUpdate(true);
+    }
+
     //다이얼로그 OK, Cancel 버튼 onClick
     const onOK = () => {
         console.dir("onOK");
@@ -84,6 +92,7 @@ function OrgtpPageLayout () {
         <Title level = {4}> 조직유형 </Title>
         <Text> 조직유형을 관리하는 페이지 입니다. </Text>
         {visible ? <OrgtpDialog 
+        isUpdate={isUpdate}
         visible={visible}
         onOK={()=>onOK()}
         onCancel={()=>onCancel()}></OrgtpDialog> : null}
@@ -141,9 +150,9 @@ function OrgtpPageLayout () {
             dataIndex: 'div',
             key: 'div',
             render: () => (
-                <Space>
+                <>
                     <Button>수정</Button><Button>삭제</Button>
-                </Space>
+                </>
             )
         },]}>
         </Table>
@@ -165,7 +174,7 @@ function OrgtpDialog (props) {
             "ORGTP_WTR": null,
             "ORGTP_WRDT": null, //SQL단에서 추가,수정
             //"ORGTP_COSTCENTER_CH": null, //사용 안 함
-            "ORGTP_COR_CH": null,
+            "ORGTP_COR_CH": false,
             "DUTY_CD_BOSS": null,
         }
     );
@@ -175,13 +184,18 @@ function OrgtpDialog (props) {
     const fetchData = async () => {
         console.dir("DialogFetchData");
         try{
-            setError(null);
-            const parentListResponse = await axios.put('http://192.168.155.30:14000/HR/Organization/ReadOrgtpParentList?action=SO');
-            setOrgtpParentList(parentListResponse.data.dto.OrgtpDO);
-            const dutyGroupListResponse = await axios.put('http://192.168.155.30:14000/HR/Organization/ReadTableDutyGroup?action=SO');
-            setOrgtpDutyGroupList(dutyGroupListResponse.data.dto.DutyGroupList);
-            const dutyListResponse = await axios.put('http://192.168.155.30:14000/HR/Organization/ReadTableDuty?action=SO');
-            setOrgtpDutyList(dutyListResponse.data.dto.DutyList);
+            if(!isUpdate){
+                setError(null);
+                const parentListResponse = await axios.put('http://192.168.155.30:14000/HR/Organization/ReadOrgtpParentList?action=SO');
+                setOrgtpParentList(parentListResponse.data.dto.OrgtpDO);
+                const dutyGroupListResponse = await axios.put('http://192.168.155.30:14000/HR/Organization/ReadTableDutyGroup?action=SO');
+                setOrgtpDutyGroupList(dutyGroupListResponse.data.dto.DutyGroupList);
+                const dutyListResponse = await axios.put('http://192.168.155.30:14000/HR/Organization/ReadTableDuty?action=SO');
+                setOrgtpDutyList(dutyListResponse.data.dto.DutyList);
+            }else {
+                setError(null);
+                
+            }
         }catch(e) {
             setError(e);
         }
@@ -226,24 +240,42 @@ function OrgtpDialog (props) {
         setOrgtpDutyList(dutyListResponse.data.dto.DutyList);
     }
     const onSelectOrgtpDutySB = (value) => {
-        setOrgtpData({...orgtpData, DUTY_CD : value});
+        setOrgtpData({
+            ...orgtpData, 
+            DUTY_CD : value
+        });
     }
     const onSelectOrgtpParentSB = (value) => {
-        setOrgtpData({...orgtpData, ORGTP_PARENT_CD: value});
+        setOrgtpData({
+            ...orgtpData, 
+            ORGTP_PARENT_CD: value
+        });
+    }
+    const onChangeOrgtpCommentInput = (value) => {
+        setOrgtpData({
+            ...orgtpData, 
+            ORGTP_COMMENT: value
+        });
     }
 
     //onToggle 이벤트
     const onChangeSwitch = (checked) => {
-        setOrgtpData({...orgtpData, ORGTP_COR_CH : checked});
+        setOrgtpData({
+            ...orgtpData, 
+            ORGTP_COR_CH : checked
+        });
     }
 
     //insert 이벤트
     const onOk = async (inputFn) => {
         console.dir("onOK");
-        console.dir(orgtpData);
         if(!orgtpData.ORGTP_NM) return null;
+        if(props.isUpdate&&!orgtpData.ORGTP_CD) return null;
         try{
-            const insertResponse = await axios.post('http://192.168.155.30:14000/HR/Organization/InsertOrgtp?action=SO', {
+            //수정이면 업데이트
+            const insertResponse = props.isUpdate ? await axios.post('http://192.168.155.30:14000/HR/Organization/InsertOrgtp?action=SO', {
+                dto: orgtpData
+            }) : await axios.post('http://192.168.155.30:14000/HR/Organization/UpdateOrgtp?action=SO', {
                 dto: orgtpData
             });
             console.dir(insertResponse);
@@ -283,6 +315,9 @@ function OrgtpDialog (props) {
                     <Select id="OrgtpParentSB" defaultValue="상위조직유형" onChange={onSelectOrgtpParentSB}>
                         {fillOrgtpParentSB()}
                     </Select>
+                </Space>
+                <Space direction="vertical">비고
+                    <Input id="OrgtpCommentInput" onChange={onChangeOrgtpCommentInput}></Input>
                 </Space>
             </Space>
         </Modal>
