@@ -10,6 +10,7 @@ const StoreProvider = ({children}) => {
     const store = useLocalStore(() => ({
         bugs: ["Centipede"],
         addBug: (bug) => {
+            //mutable!
             store.bugs.push(bug);
         },
         //get -> You can key access to array length. Don't need to call this function!
