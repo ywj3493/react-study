@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocalStore, useObserver } from "mobx-react";
+import { toJS } from 'mobx';
 
 //
 const StoreContext = React.createContext();
@@ -33,7 +34,7 @@ const BugsHeader = () => {
 
 const BugsList = () => {
     const store = React.useContext(StoreContext);
-
+    console.dir(toJS(store));
     return useObserver(()=> (
         <ul>
             {store.bugs.map(bug => (
@@ -45,6 +46,7 @@ const BugsList = () => {
 
 const BugsForm = () => {
     const store = React.useContext(StoreContext);
+    console.dir(toJS(store));
     const [bug, setBug] = React.useState("");
 
     return (
